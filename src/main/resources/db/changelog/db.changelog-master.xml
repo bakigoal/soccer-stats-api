@@ -4,5 +4,9 @@
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
     <include relativeToChangelogFile="true" file="v1/leagues/create-table.xml"/>
+    <include relativeToChangelogFile="true" file="v1/standings/create-table.xml"/>
+    <include relativeToChangelogFile="true" file="v1/scorers/create-table.xml"/>
+    <include relativeToChangelogFile="true" file="v1/assists/create-table.xml"/>
+    <include relativeToChangelogFile="true" file="v1/team/create-table.xml"/>
 
 </databaseChangeLog>
