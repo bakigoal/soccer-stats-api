@@ -12,3 +12,6 @@ services:
     x-rapidapi-host: v3.football.api-sports.io
     x-rapidapi-key: ${API_SPORTS_KEY}
 
+server:
+  port: ${PORT:8080}
+
