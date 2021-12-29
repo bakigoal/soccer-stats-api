@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: qa-app
+  datasource:
+    url: ${JDBC_DATABASE_URL:}
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.xml
+
+services:
+  soccer-api:
+    url: https://v3.football.api-sports.io/
+    x-rapidapi-host: v3.football.api-sports.io
+    x-rapidapi-key: ${API_SPORTS_KEY}
+

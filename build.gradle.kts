@@ -15,16 +15,32 @@ repositories {
 	mavenCentral()
 }
 
+extra["springCloudVersion"] = "2021.0.0"
+
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+	// Spring Starters
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
+	implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
+	// Kotlin stuff
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+	// Liquibase
+	implementation("org.springframework:spring-jdbc")
+	implementation("org.liquibase:liquibase-core")
+	// DB Drivers
+	runtimeOnly("org.postgresql:postgresql")
+	// Test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("io.projectreactor:reactor-test")
+}
+
+dependencyManagement {
+	imports {
+		mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
+	}
 }
 
 tasks.withType<KotlinCompile> {
