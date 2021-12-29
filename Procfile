@@ -1,0 +1,1 @@
+web: java -jar build/libs/soccer-stats-api-0.0.1-SNAPSHOT.jar
