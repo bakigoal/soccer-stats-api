@@ -24,38 +24,72 @@ class LeagueService(
 ) {
 
     fun findById(leagueId: Int): String {
-        var league = leagueRepository.findByIdOrNull(leagueId)
-        if (league == null) {
-            val json = soccerApiClient.getLeague(leagueId)
-            league = leagueRepository.save(LeagueEntity(leagueId, json))
-        }
+        val league = leagueRepository.findByIdOrNull(leagueId) ?: refreshLeague(leagueId)
         return league.info_json ?: "league with id=$leagueId NOT found!!!"
     }
 
     fun getStandings(leagueId: Int, year: String): String {
-        var standings = standingsRepository.findFirstByLeagueIdAndSeason(leagueId, year)
-        if (standings == null) {
-            val json  = soccerApiClient.standingsAsync(leagueId, year)
-            standings = standingsRepository.save(StandingsEntity(UUID.randomUUID(), leagueId, year, json))
-        }
+        val standings =
+            standingsRepository.findFirstByLeagueIdAndSeason(leagueId, year) ?: refreshStandings(leagueId, year)
         return standings.info_json ?: "standings with leagueId=$leagueId and year=$year NOT found!!!"
     }
 
     fun topScorers(leagueId: Int, year: String): String {
-        var scorers = scorersRepository.findFirstByLeagueIdAndSeason(leagueId, year)
-        if (scorers == null) {
-            val json  = soccerApiClient.topScorersAsync(leagueId, year)
-            scorers = scorersRepository.save(ScorersEntity(UUID.randomUUID(), leagueId, year, json))
-        }
+        val scorers = scorersRepository.findFirstByLeagueIdAndSeason(leagueId, year) ?: refreshScorers(leagueId, year)
         return scorers.info_json ?: "scorers with leagueId=$leagueId and year=$year NOT found!!!"
     }
 
     fun topAssists(leagueId: Int, year: String): String {
-        var assists = assistsRepository.findFirstByLeagueIdAndSeason(leagueId, year)
-        if (assists == null) {
-            val json  = soccerApiClient.topAssistsAsync(leagueId, year)
-            assists = assistsRepository.save(AssistsEntity(UUID.randomUUID(), leagueId, year, json))
-        }
+        val assists = assistsRepository.findFirstByLeagueIdAndSeason(leagueId, year) ?: refreshAssists(leagueId, year)
         return assists.info_json ?: "assists with leagueId=$leagueId and year=$year NOT found!!!"
+    }
+
+    fun refreshLeague(leagueId: Int): LeagueEntity {
+        val json = soccerApiClient.getLeague(leagueId)
+        return leagueRepository.save(LeagueEntity(leagueId, json))
+    }
+
+    fun refreshStandings(leagueId: Int, year: String): StandingsEntity {
+        val json = soccerApiClient.standingsAsync(leagueId, year)
+        return standingsRepository.save(StandingsEntity(UUID.randomUUID(), leagueId, year, json))
+    }
+
+    fun refreshScorers(leagueId: Int, year: String): ScorersEntity {
+        val json = soccerApiClient.topScorersAsync(leagueId, year)
+        return scorersRepository.save(ScorersEntity(UUID.randomUUID(), leagueId, year, json))
+    }
+
+    fun refreshAssists(leagueId: Int, year: String): AssistsEntity {
+        val json = soccerApiClient.topAssistsAsync(leagueId, year)
+        return assistsRepository.save(AssistsEntity(UUID.randomUUID(), leagueId, year, json))
+    }
+
+    fun refreshAll() {
+        leagueRepository.findAll().forEach {
+            val id = it.id!!
+            leagueRepository.deleteById(id)
+            refreshLeague(id)
+        }
+
+        standingsRepository.findAll().forEach {
+            val leagueId = it.leagueId!!
+            val season = it.season!!
+            standingsRepository.deleteById(it.id!!)
+            refreshStandings(leagueId, season)
+        }
+
+        scorersRepository.findAll().forEach {
+            val leagueId = it.leagueId!!
+            val season = it.season!!
+            scorersRepository.deleteById(it.id!!)
+            refreshScorers(leagueId, season)
+        }
+
+        assistsRepository.findAll().forEach {
+            val leagueId = it.leagueId!!
+            val season = it.season!!
+            assistsRepository.deleteById(it.id!!)
+            refreshAssists(leagueId, season)
+        }
     }
 }

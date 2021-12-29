@@ -14,11 +14,20 @@ class TeamService(
 ) {
 
     fun findById(teamId: Int): String {
-        var team = teamRepository.findByIdOrNull(teamId)
-        if (team == null) {
-            val json = soccerApiClient.getSquad(teamId)
-            team = teamRepository.save(TeamEntity(teamId, json))
-        }
+        val team = teamRepository.findByIdOrNull(teamId) ?: refreshSquad(teamId)
         return team.info_json ?: "squad with id=$teamId NOT found!!!"
+    }
+
+    private fun refreshSquad(teamId: Int): TeamEntity {
+        val json = soccerApiClient.getSquad(teamId)
+        return teamRepository.save(TeamEntity(teamId, json))
+    }
+
+    fun refreshSquads() {
+        teamRepository.findAll().forEach {
+            val id = it.teamId!!
+            teamRepository.deleteById(id)
+            refreshSquad(id)
+        }
     }
 }
