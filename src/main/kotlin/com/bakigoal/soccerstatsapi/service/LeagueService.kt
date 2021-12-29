@@ -63,33 +63,4 @@ class LeagueService(
         val json = soccerApiClient.topAssistsAsync(leagueId, year)
         return assistsRepository.save(AssistsEntity(UUID.randomUUID(), leagueId, year, json))
     }
-
-    fun refreshAll() {
-        leagueRepository.findAll().forEach {
-            val id = it.id!!
-            leagueRepository.deleteById(id)
-            refreshLeague(id)
-        }
-
-        standingsRepository.findAll().forEach {
-            val leagueId = it.leagueId!!
-            val season = it.season!!
-            standingsRepository.deleteById(it.id!!)
-            refreshStandings(leagueId, season)
-        }
-
-        scorersRepository.findAll().forEach {
-            val leagueId = it.leagueId!!
-            val season = it.season!!
-            scorersRepository.deleteById(it.id!!)
-            refreshScorers(leagueId, season)
-        }
-
-        assistsRepository.findAll().forEach {
-            val leagueId = it.leagueId!!
-            val season = it.season!!
-            assistsRepository.deleteById(it.id!!)
-            refreshAssists(leagueId, season)
-        }
-    }
 }

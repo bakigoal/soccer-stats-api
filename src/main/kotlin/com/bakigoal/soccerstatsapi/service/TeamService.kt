@@ -22,12 +22,4 @@ class TeamService(
         val json = soccerApiClient.getSquad(teamId)
         return teamRepository.save(TeamEntity(teamId, json))
     }
-
-    fun refreshSquads() {
-        teamRepository.findAll().forEach {
-            val id = it.teamId!!
-            teamRepository.deleteById(id)
-            refreshSquad(id)
-        }
-    }
 }
