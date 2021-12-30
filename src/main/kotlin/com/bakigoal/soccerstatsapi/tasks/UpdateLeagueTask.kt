@@ -16,7 +16,7 @@ class UpdateLeagueTask(@Autowired val leagueRepository: LeagueRepository, @Autow
 
     @Scheduled(fixedRate = 24 * 60 * 60 * 1000)
     fun reportCurrentTime() {
-        logger.info("start refreshing data (every 12 hour)...")
+        logger.info("start refreshing data ...")
         leagueRepository.deleteAll()
         teamRepository.deleteAll()
         logger.info("end refreshing data ...")
