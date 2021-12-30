@@ -6,6 +6,7 @@ heroku create
 heroku git:remote -a bakigoal-soccer-stats-api
 heroku pg:info
 heroku pg:psql
+heroku pg:credentials:url DATABASE
 
 git push heroku master
 ```
