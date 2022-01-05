@@ -11,7 +11,7 @@ private val logger = KotlinLogging.logger {}
 @Component
 class UpdateLeagueTask(@Autowired val cacheCleaner: CacheCleaner) {
 
-    @Scheduled(fixedRate = 24 * 60 * 60 * 1000)
+    @Scheduled(fixedRate = 12 * 60 * 60 * 1000)
     fun reportCurrentTime() {
         logger.info("start refreshing data ...")
         cacheCleaner.cleanCache()
